@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: infinity-health-front
+    ports:
+      - "4173:4173"  # Exponemos el puerto de Vite Preview
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
