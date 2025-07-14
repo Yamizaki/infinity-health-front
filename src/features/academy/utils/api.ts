@@ -1,20 +1,22 @@
-const API_ROOT = import.meta.env.VITE_API_URL;
+import { apiRequest } from '../../../services/api';
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('accessToken');
-  const res = await fetch(`${API_ROOT}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    ...options,
-  });
-  console.log(token, res.status, res.statusText, res.url);
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Error ${res.status}: ${errText}`);
+  
+  try {
+    // Usamos la capa centralizada de API
+    const res = await apiRequest<T>(path, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      ...options,
+    });
+    
+    return res;
+  } catch (error) {
+    console.error(`Error en la API de Academy:`, error);
+    throw error;
   }
-  return res.json();
 }
 
 export interface ZoomSessionData {

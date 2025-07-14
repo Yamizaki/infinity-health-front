@@ -1,26 +1,20 @@
 import type { CalculatorResults, Diet } from "../types";
+import { post } from "../../../services/api";
 
 export const calculateDiet = async (data: CalculatorResults): Promise<Diet> => {
   try {
-    const response = await fetch('/api/calcMacros/', {
-      method: 'POST',
+    const token = localStorage.getItem('accessToken');
+    
+    const response = await post<Diet>('calcMacros/', data, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-      },
-      body: JSON.stringify(data)
+        'Authorization': 'Bearer ' + token
+      }
     });
 
     console.log("[mealApi] calculateDiet response:", response);
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
+    return response;
   } catch (error) {
     console.error('Error en calculateDiet:', error);
     throw error;
-
   }
 };

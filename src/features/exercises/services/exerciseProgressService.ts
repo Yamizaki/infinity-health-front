@@ -6,18 +6,13 @@ export interface ExerciseProgressPayload {
   date: string;
 }
 
-export async function sendExerciseProgress(payload: ExerciseProgressPayload) {
-  const response = await fetch('/api/exercise-progress', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
+import { post } from '../../../services/api';
 
-  if (!response.ok) {
+export async function sendExerciseProgress(payload: ExerciseProgressPayload) {
+  try {
+    return await post<any>('exercise-progress', payload);
+  } catch (error) {
+    console.error('Error al guardar el progreso:', error);
     throw new Error('Error al guardar el progreso');
   }
-
-  return response.json();
 }

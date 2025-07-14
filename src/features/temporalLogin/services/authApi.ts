@@ -1,26 +1,10 @@
 import type { LoginCredentials, AuthResponse } from "../types";
+import { post } from "../../../services/api";
 
 export const authApi = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  const url = '/api/token/';
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        data.detail || 
-        data.message || 
-        `Error: ${response.status} ${response.statusText}`
-      );
-    }
-
+    const data = await post<any>('token/', credentials);
+    
     // Ensure the response includes the username
     const authResponse: AuthResponse = {
       ...data,
